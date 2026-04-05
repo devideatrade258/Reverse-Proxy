@@ -1,197 +1,209 @@
-<project>
-    <name>NGINX Reverse Proxy</name>
-    <repository>https://github.com/devideatrade258/Reverse-Proxy.git</repository>
+🚀 NGINX Reverse Proxy (Production Ready)
 
-    <description>
-        โปรเจคนี้เป็นการใช้งาน NGINX เพื่อทำหน้าที่เป็น Reverse Proxy
-        สำหรับจัดการ HTTP/HTTPS request และส่งต่อไปยัง backend services
-        เช่น Web Application หรือ API Server
-    </description>
+Reverse Proxy ด้วย NGINX สำหรับใช้งานจริง รองรับ Docker, Routing, Load Balancing และ HTTPS
 
-    <overview>
-        <nginx>
-            NGINX เป็น web server และ reverse proxy ที่มีประสิทธิภาพสูง
-            รองรับ concurrent connection จำนวนมาก และนิยมใช้ใน production
-        </nginx>
+📖 Overview
 
-        <reverse_proxy>
-            Reverse Proxy คือการที่ client ติดต่อกับ proxy server แทน backend จริง
-            โดย proxy จะเป็นตัวจัดการ routing และส่ง request ไปยัง server ภายใน
-        </reverse_proxy>
+โปรเจคนี้ใช้ NGINX เป็น Reverse Proxy เพื่อจัดการ traffic ระหว่าง client และ backend services
 
-        <benefits>
-            <item>เพิ่มความปลอดภัย (ซ่อน backend)</item>
-            <item>รองรับ load balancing</item>
-            <item>จัดการ routing ได้ง่าย</item>
-            <item>รองรับ HTTPS termination</item>
-            <item>เพิ่ม performance ด้วย caching</item>
-        </benefits>
-    </overview>
+ช่วยให้คุณสามารถ:
 
-    <architecture>
-        <diagram>
-            Client → NGINX → Backend Server(s)
-        </diagram>
+ซ่อน backend server
+จัดการ routing ได้ง่าย
+รองรับ microservices
+เพิ่ม security และ performance
+🔍 Reverse Proxy คืออะไร?
 
-        <flow>
-            <step>Client ส่ง request มายัง NGINX</step>
-            <step>NGINX ตรวจสอบ URL / path</step>
-            <step>NGINX เลือก backend ตาม config</step>
-            <step>Forward request ไปยัง backend</step>
-            <step>รับ response แล้วส่งกลับ client</step>
-        </flow>
-    </architecture>
+Reverse Proxy คือ server ที่อยู่หน้าระบบ backend ทำหน้าที่รับ request จาก client แล้วส่งต่อไปยัง server ภายใน
 
-    <project_structure>
-        <files>
-            <file>
-                <name>nginx.conf</name>
-                <description>
-                    ไฟล์หลักสำหรับ config NGINX เช่น worker, events, http
-                </description>
-            </file>
+✨ Features
+🔁 Reverse Proxy (NGINX)
+📍 Path-based routing (/api, /)
+🧩 รองรับหลาย backend
+🐳 Docker ready
+⚖️ Load balancing (รองรับ scaling)
+🔐 HTTPS (SSL/TLS)
+🚀 Performance สูง (เหมาะ production)
+🏗️ Architecture
+📁 Project Structure
+Reverse-Proxy/
+│
+├── nginx.conf
+├── conf.d/
+│   └── default.conf
+├── docker-compose.yml
+├── backend/
+│   └── (your API service)
+├── frontend/
+│   └── (your web app)
+└── ssl/
+    └── (certificate files)
+⚙️ วิธีติดตั้ง (Installation)
+🔧 สิ่งที่ต้องมี
+Docker
+Docker Compose
+📥 1. Clone Project
+git clone https://github.com/devideatrade258/Reverse-Proxy.git
+cd Reverse-Proxy
+🐳 2. Run ด้วย Docker
+docker-compose up -d
+✅ 3. ตรวจสอบว่าใช้งานได้
 
-            <file>
-                <name>conf.d/default.conf</name>
-                <description>
-                    ใช้กำหนด reverse proxy rules เช่น location และ proxy_pass
-                </description>
-            </file>
+เปิด browser:
 
-            <file>
-                <name>docker-compose.yml</name>
-                <description>
-                    ใช้สำหรับ run NGINX และ backend services ด้วย Docker
-                </description>
-            </file>
+http://localhost
 
-            <file>
-                <name>html/</name>
-                <description>
-                    static files (ถ้ามี)
-                </description>
-            </file>
-        </files>
-    </project_structure>
+หรือ
 
-    <core_configuration>
-        <example>
-            <![CDATA[
+http://localhost/api
+⚙️ Configuration (สำคัญมาก)
+📌 ตัวอย่าง default.conf
 server {
     listen 80;
 
+    # API
     location /api/ {
         proxy_pass http://backend:3000/;
-        
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
+    # Frontend
     location / {
         proxy_pass http://frontend:80/;
     }
 }
-            ]]>
-        </example>
-    </core_configuration>
+🧠 อธิบาย config ทีละส่วน
+🔹 location /api/
+ใช้จับ request ที่ขึ้นต้นด้วย /api
+เช่น /api/users
+🔹 proxy_pass
+ส่ง request ไป backend
+/api/users → backend:3000/users
+🔹 headers
 
-    <how_it_works>
-        <step number="1">Client เรียก http://your-domain/api</step>
-        <step number="2">NGINX ตรวจจับ path /api</step>
-        <step number="3">Forward ไป backend:3000</step>
-        <step number="4">Backend ประมวลผล</step>
-        <step number="5">ส่ง response กลับผ่าน NGINX</step>
-    </how_it_works>
+ช่วยให้ backend รู้ว่า request มาจาก client จริง
 
-    <installation>
-        <method>Docker</method>
-
-        <steps>
-            <step>git clone https://github.com/devideatrade258/Reverse-Proxy.git</step>
-            <step>cd Reverse-Proxy</step>
-            <step>docker-compose up -d</step>
-        </steps>
-    </installation>
-
-    <usage>
-        <examples>
-            <example>
-                <![CDATA[
-# เรียก API ผ่าน proxy
+proxy_set_header Host $host;
+proxy_set_header X-Real-IP $remote_addr;
+▶️ การใช้งาน (Usage)
+📌 ตัวอย่าง
 http://localhost/api/users
 
-# NGINX จะส่งไป
+NGINX จะส่งไป:
+
 http://backend:3000/users
-                ]]>
-            </example>
-        </examples>
-    </usage>
-
-    <features>
-        <feature>Reverse Proxy ด้วย NGINX</feature>
-        <feature>Routing ตาม path (/api, /)</feature>
-        <feature>รองรับหลาย backend</feature>
-        <feature>รองรับ Docker deployment</feature>
-        <feature>รองรับการขยายเป็น Load Balancer</feature>
-    </features>
-
-    <advanced_features>
-        <load_balancing>
-            <![CDATA[
+⚖️ Load Balancing
 upstream backend {
     server backend1:3000;
     server backend2:3000;
 }
-            ]]>
-        </load_balancing>
-
-        <https>
-            <![CDATA[
+location /api/ {
+    proxy_pass http://backend;
+}
+🔐 HTTPS (SSL)
+📌 config
 server {
     listen 443 ssl;
+
     ssl_certificate /etc/nginx/ssl/cert.pem;
     ssl_certificate_key /etc/nginx/ssl/key.pem;
+
+    location / {
+        proxy_pass http://frontend;
+    }
 }
-            ]]>
-        </https>
-    </advanced_features>
+📌 ใช้ Let's Encrypt (แนะนำ)
 
-    <use_cases>
-        <case>API Gateway</case>
-        <case>Microservices Architecture</case>
-        <case>Web Hosting</case>
-        <case>Load Balancer</case>
-    </use_cases>
+ติดตั้ง Certbot:
 
-    <troubleshooting>
-        <issue>
-            <problem>502 Bad Gateway</problem>
-            <solution>ตรวจสอบ backend server ว่าทำงานอยู่หรือไม่</solution>
-        </issue>
+sudo apt install certbot python3-certbot-nginx
+🐳 ตัวอย่าง docker-compose.yml
+version: '3'
 
-        <issue>
-            <problem>404 Not Found</problem>
-            <solution>ตรวจสอบ path ใน location และ proxy_pass</solution>
-        </issue>
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./conf.d:/etc/nginx/conf.d
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - backend
+      - frontend
 
-        <issue>
-            <problem>Connection Refused</problem>
-            <solution>ตรวจสอบ port และ network (Docker)</solution>
-        </issue>
-    </troubleshooting>
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
 
-    <future_improvements>
-        <item>เพิ่มระบบ Authentication (JWT)</item>
-        <item>เพิ่ม Rate Limiting</item>
-        <item>เพิ่ม Cache</item>
-        <item>เพิ่ม Monitoring (Prometheus)</item>
-    </future_improvements>
+  frontend:
+    build: ./frontend
+    ports:
+      - "80"
+🧪 Testing
+ใช้ curl
+curl http://localhost/api
+🛠️ Troubleshooting
+❌ 502 Bad Gateway
+backend ไม่ทำงาน
+port ไม่ตรง
+❌ 404 Not Found
+path ไม่ match location
+❌ Connection Refused
+Docker network มีปัญหา
+🔍 ดู log
+docker logs nginx
+🚀 Optimization (แนะนำสำหรับ production)
+🔹 เปิด gzip
+gzip on;
+gzip_types text/plain application/json;
+🔹 เพิ่ม timeout
+proxy_connect_timeout 60;
+proxy_read_timeout 60;
+🔹 Rate Limiting
+limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
+🔮 Future Improvements
+🔐 JWT Authentication
+📊 Monitoring (Prometheus + Grafana)
+💾 Caching (Redis / NGINX cache)
+🚦 Rate Limiting ขั้นสูง
+🌍 Multi-domain routing
+🧠 Use Cases
+API Gateway
+Microservices
+Web Hosting
+Load Balancer
+Security Layer
+👨‍💻 Author
 
-    <author>
-        <name>devideatrade258</name>
-    </author>
+devideatrade258
 
-    <license>
-        MIT License
-    </license>
-</project>
+📄 License
+
+MIT License
+
+💡 Pro Tips
+ใช้ domain จริง + SSL เสมอ
+แยก environment (dev / staging / prod)
+ใช้ CI/CD deploy อัตโนมัติ
+backup config ทุกครั้งก่อนแก้
+⭐ Bonus (แนะนำให้เพิ่มใน GitHub)
+
+เพิ่ม badge:
+
+![NGINX](https://img.shields.io/badge/NGINX-ReverseProxy-green)
+![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+
+ถ้าคุณอยาก “โหดขึ้นอีกระดับ” เช่น:
+
+🔥 ทำเป็น Kubernetes (Ingress + NGINX)
+🔥 ทำระบบ auto deploy
+🔥 ใส่ domain จริง + Cloudflare
+
+บอกผมได้เลย เดี๋ยวผมจัดให้ระดับ production จริงแบบบริษัทใช้ 🚀
